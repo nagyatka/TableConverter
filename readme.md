@@ -43,10 +43,10 @@ $testArray = [
 ];
 
 //If you use ArrayCodec as Decoder you have to specify the input associative array.
-$arrayCodec = new ArrayCodec($testArray);
+$arrayDecoder = new ArrayCodec($testArray);
 
 //If you use ArrayCodec as Coder you can leave the constructor blank.
-$arrayCodec = new ArrayCodec();
+$arrayCoder = new ArrayCodec();
 ```
 
 **CsvCodec, XlsCodec, XlsxCodec**
@@ -54,9 +54,9 @@ $arrayCodec = new ArrayCodec();
 ```php
 
 //If you use CsvCodec, XlsCodec or XlsxCodec as Decoder you have to specify the input file name.
-$csvCodec = new CsvCodec("test_file.csv");
-$xlsCodec = new XlsCodec("test_file.xls");
-$xlsxCodec = new XlsxCodec("test_file.xlsx");
+$csvDecoder = new CsvCodec("test_file.csv");
+$xlsDecoder = new XlsCodec("test_file.xls");
+$xlsxDecoder = new XlsxCodec("test_file.xlsx");
 
 
 //If you use CsvCodec, XlsCodec or XlsxCodec as Coder you have two options.
@@ -78,16 +78,16 @@ $db = new mysqli('localhost', 'user', 'pass', 'demo');
 if($db->connect_errno > 0){
     die('Unable to connect to database [' . $db->connect_error . ']');
 }
-$mysqliCodec = new MysqliCodec($db,"table_name");
+$mysqliCoder = new MysqliCodec($db,"table_name");
 
 //If you use MysqliCodec as Decoder, you have to more options. Firstly, you can use as same as in Coder. It will
 //select the whole table with all column.
-$mysqliCodec = new MysqliCodec($db,"table_name");
+$mysqliDecoder = new MysqliCodec($db,"table_name");
 
 
 //Another option is that you write an arbitrary sql query. In this case, you can leave the table name empty.
-$mysqliCodec = new MysqliCodec($db,"","SELECT * FROM table_name WHERE col1 > 5 OR col2 = 44");
-$mysqliCodec2 = new MysqliCodec($db,"","SELECT * FROM table_name JOIN table_name2 ON (table_name.id = table_name2.id)");
+$mysqliDecoder = new MysqliCodec($db,"","SELECT * FROM table_name WHERE col1 > 5 OR col2 = 44");
+$mysqliDecoder2 = new MysqliCodec($db,"","SELECT * FROM table_name JOIN table_name2 ON (table_name.id = table_name2.id)");
 
 
 ```
