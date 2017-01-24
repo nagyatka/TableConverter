@@ -90,22 +90,11 @@ class MysqliCodec implements Coder, Decoder
      */
     public function getAbstractTable()
     {
-        $schemaQuery = "SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_NAME`='".$this->tableName."'";
-        if(!$result = $this->connection->query($schemaQuery)){
-            throw new CodecException('An error occurred during schema download (MySQLi Codec):' . $this->connection->error);
-        }
-        $header = [];
-        if($result->num_rows > 0) {
-            while($row = $result->fetch_assoc()){
-                $header[] =  $row['COLUMN_NAME'];
-            }
-        }
-        $result->close();
-
         $dataQuery = $this->sql != null ? $this->sql : "SELECT * FROM ".$this->tableName;
         if (($result = $this->connection->query($dataQuery)) == false ) {
             throw new CodecException('An error occurred during rows selection (MySQLi Codec):' . $this->connection->error . ']');
         }
+
         $rows = [];
         if($result->num_rows > 0) {
             while($row = $result->fetch_assoc()){
@@ -114,6 +103,6 @@ class MysqliCodec implements Coder, Decoder
         }
         $result->close();
 
-        return new AbstractTable($header,$rows);
+        return (new ArrayCodec($rows))->getAbstractTable();
     }
 }
