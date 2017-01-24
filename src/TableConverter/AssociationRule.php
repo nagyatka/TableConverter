@@ -120,7 +120,7 @@ abstract class AssociationRule
                 $rules[$item] = $item;
             }
         }
-        return [];
+        return $rules;
     }
 
     /**

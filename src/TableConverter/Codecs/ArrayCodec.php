@@ -23,7 +23,7 @@ class ArrayCodec implements Coder, Decoder
      * ArrayCodec constructor.
      * @param array $rawArray
      */
-    public function __construct(array $rawArray = false)
+    public function __construct(array $rawArray = [])
     {
         $this->rawArray = $rawArray;
     }
@@ -35,6 +35,7 @@ class ArrayCodec implements Coder, Decoder
      */
     public function getCodedTable(AbstractTable $abstractTable, AssociationRule $associationRule)
     {
+        $associationRule->setOriginalHeader($abstractTable->getHeader());
         $newTable = $associationRule->applyRulesOnAbstractTable($abstractTable);
         return $newTable->getAllRow();
     }
@@ -45,7 +46,7 @@ class ArrayCodec implements Coder, Decoder
      */
     public function getAbstractTable()
     {
-        if($this->rawArray == false) {
+        if(count($this->rawArray) < 1) {
             throw new \Exception("Missing input in ArrayCodec.");
         }
 
