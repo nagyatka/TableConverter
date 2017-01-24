@@ -12,7 +12,6 @@ namespace TableConverter\Codecs;
 use PHPExcel;
 use PHPExcel_IOFactory;
 use TableConverter\AbstractTable;
-use TableConverter\AssociationRule;
 
 class XlsCodec implements Coder, Decoder
 {
@@ -32,15 +31,12 @@ class XlsCodec implements Coder, Decoder
 
     /**
      * @param AbstractTable $abstractTable
-     * @param AssociationRule $associationRule
      * @return mixed
      */
-    public function getCodedTable(AbstractTable $abstractTable, AssociationRule $associationRule)
+    public function getCodedTable(AbstractTable $abstractTable)
     {
-        $associationRule->setOriginalHeader($abstractTable->getHeader());
-        $newTable = $associationRule->applyRulesOnAbstractTable($abstractTable);
-        $xlsArray = $newTable->getAllRow();
-        array_unshift($xlsArray,$newTable->getHeader());
+        $xlsArray = $abstractTable->getAllRow();
+        array_unshift($xlsArray,$abstractTable->getHeader());
         $doc = new PHPExcel();
         $doc->setActiveSheetIndex(0);
         $doc->getActiveSheet()->fromArray($xlsArray, null, 'A1');

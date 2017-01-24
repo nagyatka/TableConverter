@@ -21,8 +21,14 @@ class Converter
      * @return mixed
      */
     public static function convert(Decoder $decoder, AssociationRule $associationRule, Coder $coder) {
+        //Get AbstractTable from decoder
         $abstractTable = $decoder->getAbstractTable();
+
+        //Apply association rules on AbstractTable
         $associationRule->setOriginalHeader($abstractTable->getHeader());
-        return $coder->getCodedTable($decoder->getAbstractTable(),$associationRule);
+        $newAbstractTable = $associationRule->applyRulesOnAbstractTable($abstractTable);
+
+        //Return with coded AbstractTable
+        return $coder->getCodedTable($newAbstractTable);
     }
 }

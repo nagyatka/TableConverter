@@ -2,81 +2,63 @@
 /**
  * Created by PhpStorm.
  * User: nagyatka
- * Date: 2017. 01. 23.
- * Time: 14:55
+ * Date: 2017. 01. 24.
+ * Time: 11:02
  */
 
 namespace TableConverter\Codecs;
 
 
 use PHPExcel;
-use PHPExcel_Reader_CSV;
+use PHPExcel_IOFactory;
 use TableConverter\AbstractTable;
 
-class CsvCodec extends FileCodec
+class XlsxCodec implements Coder ,Decoder
 {
-    /**
-     * @var string
-     */
-    private $delimiter;
 
     /**
      * @var string
      */
-    private $enclosure;
+    private $filename;
 
     /**
-     * CsvCodec constructor.
+     * XlsCodec constructor.
      * @param string $filename
-     * @param string $delimiter
-     * @param string $enclosure
      */
-    public function __construct($filename = null,$delimiter = ",", $enclosure = '"')
+    public function __construct($filename = null)
     {
-        $this->delimiter = $delimiter;
-        $this->enclosure = $enclosure;
-        parent::__construct($filename);
+        $this->filename = $filename;
     }
-
 
     /**
      * @param AbstractTable $abstractTable
-     * @return bool|string
+     * @return mixed
      */
     public function getCodedTable(AbstractTable $abstractTable)
     {
-        //Preprocessing AbstractTable
         $xlsArray = $abstractTable->getAllRow();
         array_unshift($xlsArray,$abstractTable->getHeader());
         $doc = new PHPExcel();
         $doc->setActiveSheetIndex(0);
         $doc->getActiveSheet()->fromArray($xlsArray, null, 'A1');
-
-        //Initialize writer
-        $writer = new \PHPExcel_Writer_CSV($doc);
-        $writer->setDelimiter($this->delimiter);
-        $writer->setEnclosure($this->enclosure);
-
-        //Write out
-        if($this->getFilename() == null) {
+        $writer = PHPExcel_IOFactory::createWriter($doc, 'Excel5');
+        if($this->filename == null) {
             ob_start();
             $writer->save('php://output');
             $excelOutput = ob_get_clean();
             return $excelOutput;
         } else {
-            $writer->save($this->getFilename());
+            $writer->save($this->filename);
             return true;
         }
     }
 
+    /**
+     * @return AbstractTable
+     */
     public function getAbstractTable()
     {
-        $objReader = new PHPExcel_Reader_CSV();
-        $objReader->setDelimiter(';');
-        $objReader->setEnclosure('');
-        $objReader->setSheetIndex(0);
-
-        $objPHPExcel    = $objReader->load($this->getFilename());
+        $objPHPExcel    = PHPExcel_IOFactory::load($this->filename);
         $objWorksheet   = $objPHPExcel->setActiveSheetIndex(0);
         $highestRow     = $objWorksheet->getHighestRow();
         $highestColumn  = $objWorksheet->getHighestColumn();

@@ -16,8 +16,7 @@ interface Coder
 {
     /**
      * @param AbstractTable $abstractTable
-     * @param AssociationRule $associationRule
      * @return mixed
      */
-    public function getCodedTable(AbstractTable $abstractTable,AssociationRule $associationRule);
+    public function getCodedTable(AbstractTable $abstractTable);
 }

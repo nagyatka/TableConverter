@@ -29,25 +29,31 @@ class ArrayCodec implements Coder, Decoder
     }
 
     /**
+     * Returns with an associative php array.
+     *
      * @param AbstractTable $abstractTable
-     * @param AssociationRule $associationRule
      * @return array
+     * @throws CodecException
      */
-    public function getCodedTable(AbstractTable $abstractTable, AssociationRule $associationRule)
+    public function getCodedTable(AbstractTable $abstractTable)
     {
-        $associationRule->setOriginalHeader($abstractTable->getHeader());
-        $newTable = $associationRule->applyRulesOnAbstractTable($abstractTable);
-        return $newTable->getAllRow();
+        $rows = $abstractTable->getAllRow();
+        if($rows == null) {
+            throw new CodecException("Missing input in ArrayCodec(Coder).");
+        }
+        return $abstractTable->getAllRow();
     }
 
     /**
+     * Returns with an AbstractTable.
+     *
      * @return AbstractTable
      * @throws \Exception
      */
     public function getAbstractTable()
     {
         if(count($this->rawArray) < 1) {
-            throw new \Exception("Missing input in ArrayCodec.");
+            throw new CodecException("Empty input in ArrayCodec(Decoder).");
         }
 
         // First we need to check and collect the array keys.
