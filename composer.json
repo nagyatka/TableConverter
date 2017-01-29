@@ -1,5 +1,5 @@
 {
-    "name": "nagyatka/TableConverter",
+    "name": "nagyatka/tableconverter",
     "type": "library",
     "description": "Table format converter",
     "keywords": ["mysql","xls","xlsx","csv","array","converter"],
