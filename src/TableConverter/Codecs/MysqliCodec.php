@@ -63,12 +63,12 @@ class MysqliCodec implements Coder, Decoder
                 foreach ($header as $item) {
                     if(is_string($row[$item])) {
                         $str = $this->connection->real_escape_string($row[$item]);
-                        $temp[] = "''".$str."'";
+                        $temp[] = "'".$str."'";
                     } else {
                         $temp[] = $row[$item];
                     }
                 }
-                if($this->connection->query($insertQuery.implode(",",$header).")") == false) {
+                if($this->connection->query($insertQuery.implode(",",$temp).")") == false) {
                     throw new \Exception("An error occurred during insert (MySQLi Codec): ".$this->connection->error);
                 }
             }

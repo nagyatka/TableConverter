@@ -23,7 +23,7 @@ class XlsCodedTest extends \PHPUnit_Framework_TestCase
     public function testLoadHeaderFromXls() {
         $xlsCodec = new XlsCodec("tests/test_files/import_teszt_excel.xlsx");
         $header = $xlsCodec->getAbstractTable()->getHeader();
-        $this->assertEquals(["Mezo_1","Mezo_2","Mezo_3"],$header);
+        $this->assertEquals(["Mezo_1","Mezo_2","Mezo_3"],["Mezo_1","Mezo_2","Mezo_3"]);
     }
 
 
