@@ -156,6 +156,7 @@ abstract class AssociationRule
             }
             $tableRows[] = $tempRow;
         }
-        return new AbstractTable($abstractTableHeader,$tableRows);
+
+        return new AbstractTable(array_merge($abstractTableHeader,array_keys($this->newFields)),$tableRows);
     }
 }
