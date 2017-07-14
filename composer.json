@@ -19,6 +19,7 @@
     },
     "require": {
 		"phpoffice/phpexcel": "1.8.1",
+        "mk-j/php_xlsxwriter": "0.32",
 		"phpunit/phpunit": "5.7.6"
     }
 }

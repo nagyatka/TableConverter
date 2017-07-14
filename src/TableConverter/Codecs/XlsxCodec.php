@@ -8,10 +8,9 @@
 
 namespace TableConverter\Codecs;
 
-
-use PHPExcel;
 use PHPExcel_IOFactory;
 use TableConverter\AbstractTable;
+use XLSXWriter;
 
 class XlsxCodec implements Coder ,Decoder
 {
@@ -38,6 +37,17 @@ class XlsxCodec implements Coder ,Decoder
     {
         $xlsArray = $abstractTable->getAllRow();
         array_unshift($xlsArray,$abstractTable->getHeader());
+
+        $writer = new XLSXWriter();
+        $writer->writeSheet($xlsArray);
+        if($this->filename == null) {
+            return $writer->writeToString();
+        } else {
+            $writer->writeToFile($this->filename);
+            return true;
+        }
+
+        /*
         $doc = new PHPExcel();
         $doc->setActiveSheetIndex(0);
         $doc->getActiveSheet()->fromArray($xlsArray, null, 'A1');
@@ -51,6 +61,7 @@ class XlsxCodec implements Coder ,Decoder
             $writer->save($this->filename);
             return true;
         }
+        */
     }
 
     /**
