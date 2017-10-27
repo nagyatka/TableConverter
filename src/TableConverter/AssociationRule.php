@@ -152,6 +152,7 @@ abstract class AssociationRule
                 }
             }
             foreach ($this->newFields as $name => $value) {
+                $row = array_merge($row,$tempRow);
                 $tempRow[$name] = is_callable($value) ? $value($row): $value;
             }
             $tableRows[] = $tempRow;
