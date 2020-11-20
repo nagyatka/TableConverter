@@ -8,9 +8,10 @@
 
 namespace TableConverter\Codecs;
 
-use PHPExcel_IOFactory;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Exception;
 use TableConverter\AbstractTable;
-use XLSXWriter;
 
 class XlsxCodec implements Coder ,Decoder
 {
@@ -21,47 +22,71 @@ class XlsxCodec implements Coder ,Decoder
     private $filename;
 
     /**
-     * XlsCodec constructor.
-     * @param string $filename
+     * @var string
      */
-    public function __construct($filename = null)
+    private $sheet_name;
+    /**
+     * @var array
+     */
+    private $styles;
+    /**
+     * @var array
+     */
+    private $formats;
+
+    /**
+     * XlsCodec constructor.
+     *
+     * @param string $filename
+     * @param string $sheet_name
+     * @param array $styles
+     * @param array $formats
+     */
+    public function __construct($filename = null, $sheet_name = '', $styles = [], $formats=[])
     {
         $this->filename = $filename;
+        $this->sheet_name = $sheet_name;
+        $this->styles = $styles;
+        $this->formats = $formats;
     }
 
     /**
      * @param AbstractTable $abstractTable
      * @return mixed
+     * @throws Exception
      */
     public function getCodedTable(AbstractTable $abstractTable)
     {
         $xlsArray = $abstractTable->getAllRow();
         array_unshift($xlsArray,$abstractTable->getHeader());
 
-        $writer = new XLSXWriter();
-        $writer->writeSheet($xlsArray);
-        if($this->filename == null) {
-            return $writer->writeToString();
-        } else {
-            $writer->writeToFile($this->filename);
-            return true;
+        $spreadsheet = new Spreadsheet();
+        $worksheet = $spreadsheet->getActiveSheet();
+        $worksheet->setTitle($this->sheet_name == '' ? 'Sheet 1' : $this->sheet_name);
+
+        $worksheet->fromArray($xlsArray);
+
+        foreach ($this->styles as $selectedCells => $styleFormatArray) {
+            $worksheet->getStyle($selectedCells)->applyFromArray($styleFormatArray);
         }
 
-        /*
-        $doc = new PHPExcel();
-        $doc->setActiveSheetIndex(0);
-        $doc->getActiveSheet()->fromArray($xlsArray, null, 'A1');
-        $writer = PHPExcel_IOFactory::createWriter($doc, 'Excel5');
+        foreach ($this->formats as $selectedCells => $formatCode) {
+            $worksheet->getStyle($selectedCells)->getNumberFormat()->setFormatCode($formatCode);
+        }
+
+
+
+        $writer = IOFactory::createWriter($spreadsheet, "Xlsx");
         if($this->filename == null) {
             ob_start();
             $writer->save('php://output');
-            $excelOutput = ob_get_clean();
-            return $excelOutput;
-        } else {
+            $output = ob_get_clean();
+            return $output;
+        }
+        else {
             $writer->save($this->filename);
             return true;
         }
-        */
     }
 
     /**
@@ -69,6 +94,7 @@ class XlsxCodec implements Coder ,Decoder
      */
     public function getAbstractTable()
     {
+        // TODO: not updated
         $objPHPExcel    = PHPExcel_IOFactory::load($this->filename);
         $objWorksheet   = $objPHPExcel->setActiveSheetIndex(0);
         $highestRow     = $objWorksheet->getHighestRow();
